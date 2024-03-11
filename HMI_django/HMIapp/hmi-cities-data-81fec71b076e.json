@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "hmi-cities-data",
+  "private_key_id": "81fec71b076ec3a8bb53198e8b05f91cd1f5ebcd",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDRo1L63DYPGWSF\np0tah4g3P+pHE3eJYo7p+XyPQrbQyO6tD2dRC8rukr4tZstda8gXTokx9VRwr13P\nVY2JkNtUAWvCa3e0t9FPUddWnJoYMabOZM9Nyuy8Hkw8+SI4EK6YU37MYNZcsHF8\nLoYi5C0bto7gztH+DBWueTYcKjTav2THShKJfZxRioKEAek9QVXqgnH9NsoHJIAM\nQXK3mXCphwUqbVFBQ/WySq1GmRS/F7ya9nbH3durIIvTIm1xMPObJVstPz1UFv4E\ni4YrI8sYFDC3U7RRFI1Elc9xqdkb+424h2xNyS3tbsAmmGWq7qd78U4u7kHoZfdX\nguaYqkqxAgMBAAECggEAY2th+I+D4bBIsGvw/BuHmbApopCUYabIoSTNEkHw4l5Q\ndul1tYVytacJIw37hzAM4iTAQt2WsKQySJhJugJlSdcsrDT8PcvpK4VkKvK0z6GI\nepxrhfilQefafxYlyNH8g0ghu7p3Htkc0Ohde+GblOeEpg/fnexMQgTBCSVpEI3V\nVOxu8Wz6ct7kfYQ7H2PuMy1VaCZathJO9o7MyDe7N6EIwz9asOqzhZNyhgr4+Pes\nu2BWOhLp4iOIdP/wWkCd+M8bt3VC7EhGPnh9uGyHBG8Dl1qkbQNGMwV+fj87m3cg\nQS1WCKapUB4hapaXGJqqTOGdH6EoVQpTsZiobyuOmwKBgQDwL26WTZhy5WdJ7kb4\ngifoZIJX9iwk9+h9l2VIyyEVGxlXtoHMefXsuofrxfPralxqalNAlFpDKqpYMqOU\nr1mv5qCTkAvuXqC6yk2QZp4MUkCn6up1Dx9wnrxCQbpYzG0GFLCKUHewPnFK5J6F\nZ6hjaXcM1eBo+TOsHACrH+hkSwKBgQDfcPx+r39fvpmxxImVxbID/5X3oI35v+cX\n4qLiFEP6HythpftGo4m24Pp2u/MCoJk5Q/CLhpNdfE+mLJLI6IMnYC7Enpam5sY7\ndmFTpVg2neDPyp4i+LxjZw9erUeIKa2xBc4/vlwUWcQBxxjgml79NBRs2huuY+rF\n3FfobDeXcwKBgDzLBKauhUOvpPElinkkGI3NwuAYwxuoVARV6aD/KSR6c3OsEjZ7\nOC/vFrAqro6LoVCeEOxroF0X0333c0gTChRnv4UaFKsE8JHW2sMN9jsQJqVZ5HY0\nmbSbuPLcSBppw76iRfz8WQ8W/v4B183Uat6ety9cgyyOxvFtNQ4bSWr5AoGAZ+9x\ntChEcrABZDyM11tXnB6GjuJjSFpoz6Z/p/RPToizMD/6K3ik9amfOB3jQ0SbIZUl\nznEyGVla32x6dvQZFfbaqmEuqMJOUZiWW0ddSkKUMXQJrTDQyNhGwP6PeJoSjnap\n4uLUiC7dSwpm2wtTxio0mhG2sJ8PtSvyxE2aalsCgYEAutxx+ai8w54Q85MoQ0iO\nQi8TZzQdD1GkJpORwkub0W/mB4YkRVvc6aXprcJvtQO53nKFT/umeiLWCsCykU1A\nLBP//iQ6A1b0Lh4HZvYcM8rHV/NKK0iWBlt3p3uyG8TVUyeb//5dmmDFGzHGfW6D\nShGNZwSORUMljYE8PQJ+PGE=\n-----END PRIVATE KEY-----\n",
+  "client_email": "hmi-weather@hmi-cities-data.iam.gserviceaccount.com",
+  "client_id": "112731585613208230080",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/hmi-weather%40hmi-cities-data.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
