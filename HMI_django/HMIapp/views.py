@@ -40,6 +40,7 @@ def get_cities_from_google_sheet(request):
     # Remove the header if present
     if cities[0] == 'City':
         cities = cities[1:]
+    
 
     # Return the cities as JSON response
     return JsonResponse({'cities': cities})
