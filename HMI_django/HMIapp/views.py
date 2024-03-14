@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .models import weather
+from .models import weather, city
 from .serializer import *
 from rest_framework.response import Response
 import gspread
@@ -9,6 +9,10 @@ from django.http import JsonResponse, HttpResponse
 import requests
 import os
 from dotenv import load_dotenv
+from .utils import get_weather_info
+import numpy as np
+import json
+
 
 
 class ReactView(APIView):
@@ -64,28 +68,77 @@ def get_google_sheets_data(request):
 
     # Fetch the data
     data = worksheet.get_all_records()
-    return HttpResponse(data)
+
+    # Extract column headers
+    headers = data[0].keys()
+
+    # Convert data into list of dictionaries
+    data_list = []
+    for row in data:
+        data_dict = {}
+        for header in headers:
+            data_dict[header] = row[header]
+        data_list.append(data_dict)
+
+    return JsonResponse(data_list, safe=False)
 
 
-def get_weather_info(request):
+
+def get_weather_info(request, cityName):
     load_dotenv()
 
     api_key = os.getenv('API_KEY')
-    url = f'http://api.openweathermap.org/data/2.5/weather?q=London&appid={api_key}&units=metric'
+    url = f'http://api.openweathermap.org/data/2.5/weather?q={cityName}&appid={api_key}'
 
-    response = requests.get(url)
-    data = response.json()
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        data = response.json()
+        return JsonResponse(data)
+    
+    except requests.exceptions.RequestException as e:
+      return HttpResponse('Failed to fetch weather information. Please try again later.', status=500)
 
-    if response.status_code == 200:
-        weather_conditions = data['weather'][0]['main']
-        # Check if weather conditions match the desired ones
-        desired_conditions = ['Thunderstorm', 'Drizzle', 'Rain', 'Snow', 'Atmosphere', 'Clear', 'Clouds']
-        if weather_conditions in desired_conditions:
-            return JsonResponse({'weather_conditions': weather_conditions})
-        else:
-            return JsonResponse({'message': 'Weather conditions not matched'}, status=404)
-    else:
-        return JsonResponse({'message': 'Failed to fetch weather information'}, status=response.status_code)
+    
+
+def get_cities_states_by_weather(request):
+    # Get the weather condition from the request
+    weather_condition = request.GET.get('weather_condition')
+    desired_conditions = ['Thunderstorm', 'Drizzle', 'Rain', 'Snow', 'Atmosphere', 'Clear', 'Clouds']
+    weather_api_data = []
+    matching_cities = []
+
+    # Check if the weather condition is one of the desired_conditions
+    if weather_condition in desired_conditions:
+        response = get_google_sheets_data(request)
+    #   Decode byte data assuming it's in UTF-8 encoding
+        all_cities_states = response.content.decode('utf-8')
+
+        # Parse JSON data
+        all_cities_states = json.loads(all_cities_states)
+  # Iterate over each city-state pair
+        for city_state in all_cities_states:
+            # Access city and state information from the dictionary
+            city = city_state['City']
+            state = city_state['State']
+
+            # Get weather info for each city
+            weather_info = get_weather_info(request=request,cityName=city)
+            weather_api_data.append(weather_info)
+     # loop here get all weather data for all cites
+
+    # Iterate over the weather data dictionary
+        for city, weather in weather_api_data:
+    # Check if the weather for the current city matches the condition
+            if weather['main'] == weather_condition:
+                matching_cities.append({'City': city, 'State': state})
+
+    # add matching city to array on each iteration
+    #   return matching cities
+            return [weather_api_data, matching_cities]
+    else: 
+        return JsonResponse({'message': 'Weather conditions not matched please select one of the following', 'conditions': desired_conditions }, status=400)
+
 
 # Create your views here.
 

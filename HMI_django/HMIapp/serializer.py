@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import weather
+from .models import weather, city
 
 class ModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = weather
-        fields = ['condition','city']  # or specify specific fields
+        model = weather, city
+        fields = ['condition','city','cities,states']  # or specify specific fields
