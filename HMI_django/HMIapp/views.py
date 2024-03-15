@@ -12,6 +12,8 @@ from dotenv import load_dotenv
 from .utils import get_weather_info
 import numpy as np
 import json
+from django.core.serializers.json import DjangoJSONEncoder
+
 
 
 
@@ -94,10 +96,10 @@ def get_weather_info(request, cityName):
         response = requests.get(url)
         response.raise_for_status()  # Raise an exception for HTTP errors
         data = response.json()
-        return JsonResponse(data)
+        return data
     
     except requests.exceptions.RequestException as e:
-      return HttpResponse('Failed to fetch weather information. Please try again later.', status=500)
+      return {'error': 'Failed to fetch weather information. Please try again later.'}
 
     
 
@@ -105,8 +107,7 @@ def get_cities_states_by_weather(request):
     # Get the weather condition from the request
     weather_condition = request.GET.get('weather_condition')
     desired_conditions = ['Thunderstorm', 'Drizzle', 'Rain', 'Snow', 'Atmosphere', 'Clear', 'Clouds']
-    weather_api_data = []
-    matching_cities = []
+
 
     # Check if the weather condition is one of the desired_conditions
     if weather_condition in desired_conditions:
@@ -116,6 +117,9 @@ def get_cities_states_by_weather(request):
 
         # Parse JSON data
         all_cities_states = json.loads(all_cities_states)
+
+        weather_api_data = []
+        matching_cities = []
   # Iterate over each city-state pair
         for city_state in all_cities_states:
             # Access city and state information from the dictionary
@@ -124,18 +128,28 @@ def get_cities_states_by_weather(request):
 
             # Get weather info for each city
             weather_info = get_weather_info(request=request,cityName=city)
-            weather_api_data.append(weather_info)
+            weather_api_data.append({'City': city, 'Weather': weather_info})
      # loop here get all weather data for all cites
 
     # Iterate over the weather data dictionary
-        for city, weather in weather_api_data:
+    
     # Check if the weather for the current city matches the condition
-            if weather['main'] == weather_condition:
-                matching_cities.append({'City': city, 'State': state})
+            if isinstance(weather_info, dict):
+                weather_api_data.append({'City': city, 'Weather': weather_info})
 
+                # Check if the weather for the current city matches the condition
+                if 'main' in weather_info and weather_info['main'] == weather_condition:
+                    matching_cities.append({'City': city, 'State': state})
+            else:
+                # Handle the case where weather_info is not in a proper format
+                print("Weather info is not in a proper format:", weather_info)
     # add matching city to array on each iteration
+                
     #   return matching cities
-            return [weather_api_data, matching_cities]
+        return JsonResponse({
+            'weather_api_data': weather_api_data,
+            'matching_cities': matching_cities
+        }, encoder=DjangoJSONEncoder)    
     else: 
         return JsonResponse({'message': 'Weather conditions not matched please select one of the following', 'conditions': desired_conditions }, status=400)
 
