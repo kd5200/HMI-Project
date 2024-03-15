@@ -13,6 +13,8 @@ from .utils import get_weather_info
 import numpy as np
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.cache import cache
+
 
 
 
@@ -187,8 +189,16 @@ def get_cities_states_by_weather(request):
         city = city_state['City']
         state = city_state['State']
 
+        
         # Get weather info for each city
-        weather_info = get_weather_info(request=request, cityName=city)
+        cache_key = f'weather_info_{city}'
+        weather_info = cache.get(cache_key)
+
+        if weather_info is None:
+    # If weather data is not cached, make a request to the weather API
+            weather_info = get_weather_info(request=request, cityName=city)
+    # Cache the weather data for future use with a timeout of 1 hour
+            cache.set(cache_key, weather_info, timeout=3600)
 
         # Check if weather_info is in a proper format
         if isinstance(weather_info, dict):
@@ -196,7 +206,7 @@ def get_cities_states_by_weather(request):
 
             # Check if the weather for the current city matches the condition
             if "weather" in weather_info and weather_info["weather"][0]["main"] == weather_condition:
-                temperature_fahrenheit = (weather_info['main']['temp'] - 273.15) * 9/5 + 32
+                temperature_fahrenheit = round((weather_info['main']['temp'] - 273.15) * 9/5 + 32)
                 # Add city, state, temperature in Fahrenheit, and wind speed to matching data
                 matching_data.append({
                     'City': city,
