@@ -103,10 +103,16 @@ def get_weather_info(request, cityName):
 
     
 
-def get_cities_states_by_weather(request):
+# def get_cities_states_by_weather(request):
     # Get the weather condition from the request
     weather_condition = request.GET.get('weather_condition')
+
+    if not weather_condition:
+        return JsonResponse({'message': 'Weather condition parameter is missing'}, status=400)
+
     desired_conditions = ['Thunderstorm', 'Drizzle', 'Rain', 'Snow', 'Atmosphere', 'Clear', 'Clouds']
+
+    
 
 
     # Check if the weather condition is one of the desired_conditions
@@ -152,6 +158,60 @@ def get_cities_states_by_weather(request):
         }, encoder=DjangoJSONEncoder)    
     else: 
         return JsonResponse({'message': 'Weather conditions not matched please select one of the following', 'conditions': desired_conditions }, status=400)
+
+
+
+def get_cities_states_by_weather(request):
+    # Get the weather condition from the request query parameters
+    weather_condition = request.GET.get('weather_condition')
+
+    if not weather_condition:
+        return JsonResponse({'message': 'Weather condition parameter is missing'}, status=400)
+
+    # List of desired weather conditions
+    desired_conditions = ['Thunderstorm', 'Drizzle', 'Rain', 'Snow', 'Atmosphere', 'Clear', 'Clouds']
+
+    # Check if the provided weather condition is valid
+    if weather_condition not in desired_conditions:
+        return JsonResponse({'message': 'Invalid weather condition'}, status=400)
+
+    # Assuming get_google_sheets_data and get_weather_info are defined somewhere
+    response = get_google_sheets_data(request)
+    all_cities_states = json.loads(response.content.decode('utf-8'))
+
+    weather_api_data = []
+    matching_data = []
+
+    # Iterate over each city-state pair
+    for city_state in all_cities_states:
+        city = city_state['City']
+        state = city_state['State']
+
+        # Get weather info for each city
+        weather_info = get_weather_info(request=request, cityName=city)
+
+        # Check if weather_info is in a proper format
+        if isinstance(weather_info, dict):
+            weather_api_data.append({'City': city, 'Weather': weather_info})
+
+            # Check if the weather for the current city matches the condition
+            if "weather" in weather_info and weather_info["weather"][0]["main"] == weather_condition:
+                temperature_fahrenheit = (weather_info['main']['temp'] - 273.15) * 9/5 + 32
+                # Add city, state, temperature in Fahrenheit, and wind speed to matching data
+                matching_data.append({
+                    'City': city,
+                    'State': state,
+                    'Temperature_Fahrenheit': temperature_fahrenheit,
+                    'Wind_Speed': weather_info['wind']['speed']
+                })
+        else:
+            # Handle the case where weather_info is not in a proper format
+            print("Weather info is not in a proper format:", weather_info)
+
+    return JsonResponse({
+        
+        'matching_data': matching_data
+    }, encoder=DjangoJSONEncoder)
 
 
 # Create your views here.
