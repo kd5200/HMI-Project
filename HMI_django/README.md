@@ -1,6 +1,6 @@
-# HMI-Project
+# HMI-Weather API
 
-This repository contains the source code for the HMI project.
+This repository contains the source code for the Weather App API.
 
 ## Installing Dependencies
 
@@ -70,5 +70,15 @@ To create a Google API key, follow these steps:
 ##
 
 ## Running the Django Server Locally
+
+To run the Django server locally, follow these steps:
+
+1. Navigate to the root directory of the project.
+
+2. Run the following command to start the Django server:
+   ```sq
+   python manage.py runserver
+   ```
+3. The Django server will start running locally at http://127.0.0.1:8000/. You can access it using a web browser.
 
 ##
