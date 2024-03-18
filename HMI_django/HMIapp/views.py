@@ -105,62 +105,6 @@ def get_weather_info(request, cityName):
 
     
 
-# def get_cities_states_by_weather(request):
-    # Get the weather condition from the request
-    weather_condition = request.GET.get('weather_condition')
-
-    if not weather_condition:
-        return JsonResponse({'message': 'Weather condition parameter is missing'}, status=400)
-
-    desired_conditions = ['Thunderstorm', 'Drizzle', 'Rain', 'Snow', 'Atmosphere', 'Clear', 'Clouds']
-
-    
-
-
-    # Check if the weather condition is one of the desired_conditions
-    if weather_condition in desired_conditions:
-        response = get_google_sheets_data(request)
-    #   Decode byte data assuming it's in UTF-8 encoding
-        all_cities_states = response.content.decode('utf-8')
-
-        # Parse JSON data
-        all_cities_states = json.loads(all_cities_states)
-
-        weather_api_data = []
-        matching_cities = []
-  # Iterate over each city-state pair
-        for city_state in all_cities_states:
-            # Access city and state information from the dictionary
-            city = city_state['City']
-            state = city_state['State']
-
-            # Get weather info for each city
-            weather_info = get_weather_info(request=request,cityName=city)
-            weather_api_data.append({'City': city, 'Weather': weather_info})
-     # loop here get all weather data for all cites
-
-    # Iterate over the weather data dictionary
-    
-    # Check if the weather for the current city matches the condition
-            if isinstance(weather_info, dict):
-                weather_api_data.append({'City': city, 'Weather': weather_info})
-
-                # Check if the weather for the current city matches the condition
-                if 'main' in weather_info and weather_info['main'] == weather_condition:
-                    matching_cities.append({'City': city, 'State': state})
-            else:
-                # Handle the case where weather_info is not in a proper format
-                print("Weather info is not in a proper format:", weather_info)
-    # add matching city to array on each iteration
-                
-    #   return matching cities
-        return JsonResponse({
-            'weather_api_data': weather_api_data,
-            'matching_cities': matching_cities
-        }, encoder=DjangoJSONEncoder)    
-    else: 
-        return JsonResponse({'message': 'Weather conditions not matched please select one of the following', 'conditions': desired_conditions }, status=400)
-
 
 
 def get_cities_states_by_weather(request):
@@ -169,12 +113,17 @@ def get_cities_states_by_weather(request):
 
     if not weather_condition:
         return JsonResponse({'message': 'Weather condition parameter is missing'}, status=400)
+    
+
 
     # List of desired weather conditions
     desired_conditions = ['Thunderstorm', 'Drizzle', 'Rain', 'Snow', 'Atmosphere', 'Clear', 'Clouds']
 
+    weather_condition_lower = weather_condition.lower()
+
+
     # Check if the provided weather condition is valid
-    if weather_condition not in desired_conditions:
+    if weather_condition_lower not in [condition.lower() for condition in desired_conditions]:
         return JsonResponse({'message': 'Invalid weather condition'}, status=400)
 
     # Assuming get_google_sheets_data and get_weather_info are defined somewhere
