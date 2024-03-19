@@ -154,7 +154,7 @@ def get_cities_states_by_weather(request):
             weather_api_data.append({'City': city, 'Weather': weather_info})
 
             # Check if the weather for the current city matches the condition
-            if "weather" in weather_info and weather_info["weather"][0]["main"] == weather_condition:
+            if "weather" in weather_info and weather_info["weather"][0]["main"].lower() == weather_condition_lower:
                 temperature_fahrenheit = round((weather_info['main']['temp'] - 273.15) * 9/5 + 32)
                 # Add city, state, temperature in Fahrenheit, and wind speed to matching data
                 matching_data.append({
